@@ -105,7 +105,7 @@ function App() {
   }
 
   const logout = () => {
-    axios.get('http://localhost:8000/user/logout', {withCredentials: true}).then((response) => {
+    axios.get('/user/logout', {withCredentials: true}).then((response) => {
       setValid(false)
       setLogin(false)
     })
