@@ -115,11 +115,11 @@ function App() {
     setLogin(Cookies.get('userId') !== undefined)
     if(Cookies.get('userId') !== undefined && !valid)
     {
-      axios.get('http://localhost:8000/user/find', {withCredentials: true}).then((response) => {
+      axios.get('/user/find', {withCredentials: true}).then((response) => {
         setUser(response.data)
       })
 
-      axios.get('http://localhost:8000/room/retrieve', {withCredentials: true}).then((response) => {
+      axios.get('/room/retrieve', {withCredentials: true}).then((response) => {
         setRooms(response.data)
         setCurrentRoom(response.data[0])
       })
