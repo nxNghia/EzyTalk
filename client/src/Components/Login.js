@@ -51,15 +51,23 @@ const Login = ({logIn}) => {
             <form autoComplete='off' noValidate style={style.form}>
                 <TextField
                     required
+                    value={user.username}
                     id='standard-basic'
                     style={style.textField}
                     onChange={(e) => setUser({...user, username: e.target.value})}
                     placeholder='username'></TextField>
                 <TextField 
                     required 
+                    value={user.password}
                     id='standard-basic' 
                     style={style.textField} 
-                    onChange={(e) => setUser({...user, password: e.target.value})} 
+                    onChange={(e) => setUser({...user, password: e.target.value})}
+                    onKeyUp={(e) => {
+                        if(e.key === 'Enter')
+                        {
+                            logIn(user)
+                        }
+                    }}
                     placeholder='password'
                     type='password'
                 ></TextField>
@@ -69,12 +77,14 @@ const Login = ({logIn}) => {
                 }}>Log in</Button>
                 <Button style={style.button} variant='contained' color='primary' onClick={(e) => {
                     e.preventDefault()
+                    setUser({username: '', password: ''})
                     setAccount(false)
                 }}>Register</Button>
             </form> :
             <form autoComplete='off' noValidate style={style.form}>
                 <TextField 
-                    required 
+                    required
+                    value={user.username} 
                     id='standard-basic' 
                     style={style.textField} 
                     onChange={(e) => setUser(user => ({...user, username: e.target.value}))} 
@@ -82,8 +92,10 @@ const Login = ({logIn}) => {
                 ></TextField>
                 <TextField 
                     required 
+                    value={user.password}
                     id='standard-basic' 
                     style={style.textField} 
+                    type='password'
                     onChange={(e) => setUser(user => ({...user, password: e.target.value}))} 
                     placeholder='password'
                 ></TextField>
@@ -92,9 +104,16 @@ const Login = ({logIn}) => {
                     error={error}
                     id={error ? 'standard-error-helper-text' : 'standard-basic'}
                     style={style.textField} 
+                    type='password'
                     onChange={(e) => {
                         setError(e.target.value !== user.password)
                     }} 
+                    onKeyUp={(e) => {
+                        if(e.key === 'Enter')
+                        {
+                            registation()
+                        }
+                    }}
                     placeholder='confirm password'
                 ></TextField>
                 <Button style={style.button} variant='contained' color='primary' onClick={(e) => {
@@ -103,6 +122,7 @@ const Login = ({logIn}) => {
                 }}>Done</Button>
                 <Button style={style.button} variant='contained' color='primary' onClick={(e) => {
                     e.preventDefault()
+                    setUser({username: '', password: ''})
                     setAccount(true)
                 }}>Back</Button>
             </form>

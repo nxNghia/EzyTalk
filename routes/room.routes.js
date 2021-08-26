@@ -56,6 +56,7 @@ router.post('/find', (request, response) => {
       if(result)
       {
         User.findOne({_id: request.cookies.userId}).then(user => {
+          const index = user.rooms.findIndex(room => room.roomId == result._id)
           if(user.rooms.findIndex(room => room.roomId === result._id) === -1)
           {
             user.rooms.push({roomId: result._id})

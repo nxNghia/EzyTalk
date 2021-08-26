@@ -78,10 +78,13 @@ function App() {
     console.log('begin')
     axios.post('/room/find', {id: roomId}, {withCredentials: true})
     .then((response) => {
+      console.log(response.data)
+      console.log(user.rooms)
       const exist = user.rooms.findIndex((room) => room.roomId === response.data._id)
+      console.log(exist)
       if(exist === -1)
       {
-        setRooms([...rooms, response.data])
+        setRooms([response.data, ...rooms])
       }
     })
   }
@@ -108,6 +111,8 @@ function App() {
     axios.get('/user/logout', {withCredentials: true}).then((response) => {
       setValid(false)
       setLogin(false)
+      setCurrentRoom(null)
+      setRooms([])
     })
   }
 
