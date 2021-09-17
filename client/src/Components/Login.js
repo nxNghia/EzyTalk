@@ -4,9 +4,6 @@ import axios from 'axios';
 import { useState } from 'react';
 
 const Login = ({logIn}) => {
-    // const [text, setText] = useState('')
-    // const [text2, setText2] = useState('')
-    // const [text3, setText3] = useState('')
     const [error, setError] = useState(false)
     const [user, setUser] = useState({username: '', password: ''})
     const [haveAccount, setAccount] = useState(true)
@@ -40,7 +37,6 @@ const Login = ({logIn}) => {
 
     const registation = async () => {
         const result = await axios.post('/user/signin', user)
-        console.log(result.data.valid)
         if(result.data.valid)
             logIn(user)
     }

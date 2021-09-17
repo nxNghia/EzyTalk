@@ -36,7 +36,6 @@ const RoomBanner = ({room, leave}) => {
 
         menuIcon: {
             cursor: 'pointer',
-            // position: 'absolute',
             right: 0,
             top: 10,
         },
@@ -50,7 +49,6 @@ const RoomBanner = ({room, leave}) => {
         dropDownItem: {
             maxWidth: '100%',
             display: 'block',
-            // position: 'absolute',
         },
 
         roomCode: {
@@ -75,9 +73,6 @@ const RoomBanner = ({room, leave}) => {
             {room && <div>
                 <p style={style.name}>
                     {show ? room.short_id : room.room_name}
-                    {/* <span>
-                        {!room.public && <LockIcon></LockIcon>}
-                    </span> */}
                     <QueueIcon
                         style={style.roomCode}
                         onClick={() => setShow(!show)}

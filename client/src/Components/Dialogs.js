@@ -32,7 +32,6 @@ const Dialogs = ({socket, room, leave}) => {
         if(new_cookie === dialog.from.id)
         {
             setDeleteId(dialog._id)
-            console.log(dialog._id)
             socket.emit('delete', dialog._id, room._id)
         }else{
             setError(true)
@@ -44,7 +43,6 @@ const Dialogs = ({socket, room, leave}) => {
         {
             axios.post('/chat/retrieve', room, {withCredentials: true}).then(response => {
                 setDialogs(response.data)
-                console.log(response.data)
             })
         }
 
@@ -52,7 +50,6 @@ const Dialogs = ({socket, room, leave}) => {
 
     useEffect(() => {
         socket.on('your_new_message', (dialog) => {
-            console.log(dialog)
             setDialogs([...dialogs, dialog])
             MessEnding.current.scrollIntoView({ behavior: 'smooth'})
             
@@ -60,15 +57,6 @@ const Dialogs = ({socket, room, leave}) => {
 
         socket.on('dialog-deleted', (id) => {
             setDeleteId(id)
-            console.log(id)
-        })
-        
-        socket.on('return-reaction', (dialog) => {
-            console.log('dialog')
-            // const result = dialogs.find(d => d.textId === dialog.textId)
-
-            // if (result != null)
-            //     result.reactions = dialog.reactions
         })
 
         if(dialogs === null)
@@ -76,9 +64,7 @@ const Dialogs = ({socket, room, leave}) => {
 
         if(deleteId !== null)
         {
-            console.log(dialogs, deleteId)
             const index = dialogs.findIndex(dialog => dialog._id === deleteId)
-            console.log(index)
             if(index !== -1)
                 dialogs.splice(index, 1)
             setDeleteId(null)

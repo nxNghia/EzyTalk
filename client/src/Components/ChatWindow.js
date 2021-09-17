@@ -18,12 +18,10 @@ const ChatWindow = ({socket, room, leave}) => {
     }, [room])
 
     return (
-        // <Container style={style.container}>
         <div style={style.container}>
             <Dialogs socket={socket} room={room} leave={leave}></Dialogs>
             {room && <Input socket={socket} room={room}></Input>}
         </div>
-        // </Container>
     )
 }
 

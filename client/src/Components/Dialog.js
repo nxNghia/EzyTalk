@@ -91,7 +91,6 @@ const Dialog = ({dialog, socket, onDelete, room}) => {
                         if(reaction.users.length !== 0)
                         {
                             reacted += reaction.users.length
-                            console.log(reaction.reactionType)
                             return <EmojiIcon key={reaction.reactionType} emojiIndex={reaction.reactionType}></EmojiIcon>
                         }else return null
                     })}
@@ -111,7 +110,6 @@ const Dialog = ({dialog, socket, onDelete, room}) => {
 
     useEffect(() => {
         socket.on('return-reaction', (return_dialog) => {
-            console.log(return_dialog)
             if(dialog._id === return_dialog._id)
             {
                 setReaction(return_dialog.reactions)
@@ -123,10 +121,6 @@ const Dialog = ({dialog, socket, onDelete, room}) => {
             const cookie = Cookies.get('userId')
             const index = cookie.indexOf('"')
             setSelf(cookie.slice(index + 1, cookie.length - 1) === dialog.from.id)
-        }
-
-        return () => {
-            // socket.off('return-reaction')
         }
     }, [reactions])
 

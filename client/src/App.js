@@ -50,7 +50,6 @@ function App() {
   }
 
   const logIn = async (user) => {
-    console.log(user)
     const result = await axios.post('/user/login', user, {withCredentials: true})
     setValid(result.data._id !== undefined)
     setUser(result.data)
@@ -62,40 +61,38 @@ function App() {
     }
   }
 
-  const leaveRoom = (id) => {
-    axios.post('/room/leave', {id: id}, {withCredentials: true}).then((response) => {
-      console.log(response.data)
-      const index = rooms.findIndex(room => room._id === id)
-      rooms.splice(index, 1)
-      if(rooms.length !== 0)
-        setCurrentRoom(rooms[0])
-      else
-        setCurrentRoom(null)
-    })
+  const leaveRoom = async (id) => {
+    const res = await axios.post('/room/leave', {id: id}, {withCredentials: true})
+    const index = rooms.findIndex(room => room._id === id)
+    rooms.splice(index, 1)
+    if(rooms.length !== 0)
+      setCurrentRoom(rooms[0])
+    else
+      setCurrentRoom(null)
   }
 
-  const findRoom = () => {
-    console.log('begin')
-    axios.post('/room/find', {id: roomId}, {withCredentials: true})
-    .then((response) => {
-      console.log(response.data)
-      console.log(user.rooms)
+  const findRoom = async () => {
+    const response = await axios.post('/room/find', {id: roomId}, {withCredentials: true})
+    if(response)
+    {
       const exist = user.rooms.findIndex((room) => room.roomId === response.data._id)
-      console.log(exist)
       if(exist === -1)
       {
         setRooms([response.data, ...rooms])
       }
-    })
+    }
   }
 
   const joinRoom = async (room) => {
     if(room)
     {
-      const result = await axios.post('/room/create', room, {withCredentials: true})
-      setUser(result.data.user)
-      setRooms([...rooms, result.data.room])
-      setCurrentRoom(result.data.room)
+      const response = await axios.post('/room/create', room, {withCredentials: true})
+      if(response)
+      {
+        setUser(result.data.user)
+        setRooms([...rooms, result.data.room])
+        setCurrentRoom(result.data.room)
+      }
     }
   }
 
@@ -107,13 +104,15 @@ function App() {
     }
   }
 
-  const logout = () => {
-    axios.get('/user/logout', {withCredentials: true}).then((response) => {
+  const logout = async () => {
+    const response = await axios.get('/user/logout', {withCredentials: true})
+    if(response)
+    {
       setValid(false)
       setLogin(false)
       setCurrentRoom(null)
       setRooms([])
-    })
+    }
   }
 
   useEffect(() => {
