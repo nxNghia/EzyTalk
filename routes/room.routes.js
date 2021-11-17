@@ -32,7 +32,7 @@ router.post('/create', (request, response) => {
 
   const new_room = new Room({
     short_id: shortid.generate(),
-    room_name: request.body.room_name,
+    room_name: request.body.room_name.trim(),
     color: Math.floor(Math.random() * 16777215).toString(16)
   })
 
