@@ -1,16 +1,18 @@
 import { InputAdornment } from "@material-ui/core";
 import TextField from '@material-ui/core/TextField';
 import SendIcon from '@material-ui/icons/Send';
-import '../../src/App.css';
+import '../../App.css';
+import { useMediaQuery } from 'react-responsive'
 
 const FindRoom = ({roomId, setRoomId, findRoom}) => {
+    const limit = useMediaQuery({maxWidth: 1300})
     const style = {
         searchRoom: {
             position: 'fixed',
             bottom: '20px',
             left: '30px',
             color: '#ffffff',
-            width: '20%'
+            width: limit ? '11em' : '20%'
         },
     }
     return (

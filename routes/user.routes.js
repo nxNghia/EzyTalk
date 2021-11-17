@@ -1,8 +1,6 @@
 const express = require('express')
 
 const User = require('../models/user.model')
-const Room = require('../models/room.model')
-const Chat = require('../models/chat.model')
 
 const router = express.Router()
 
@@ -12,6 +10,7 @@ router.get('/find', (request, response) => {
     })
 })
 
+//ok
 router.get('/logout', (request, response) => {
     response.clearCookie('userId')
     response.send()
@@ -21,29 +20,28 @@ router.post('/signin', (request, response) => {
     const result = {
       username: request.body.username,
       password: request.body.password,
-      rooms: []
+      color: Math.floor(Math.random() * 16777215).toString(16)
     }
-  
+
     const newUser = new User(result)
-    newUser.save((err) => {
+    newUser.save((err, result) => {
       if(err) return handleError(err)
     })
   
     response.send({valid: true})
 })
 
+//ok
 router.post('/login', (request, response) => {
     const result = {
       username: request.body.username,
       password: request.body.password
     }
-  
-    User.findOne({username: result.username, password: result.password}).then(user => {
-      if(user !== null)
-      {
-        response.cookie('userId', user._id)
-      }
-      response.send(user)
+
+    User.findOne({ username: result.username, password: result.password }).then(result => {
+      if(result)
+        response.cookie('userId', result._id)
+      response.send(result)
     })
 })
 

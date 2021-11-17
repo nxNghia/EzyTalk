@@ -1,0 +1,7 @@
+.intro-text {
+    font-family: 'Comfortaa', cursive;
+    text-shadow: -2px -2px 0 #fff, 2px -2px 0 #fff, -2px 2px 0 #fff, 2px 2px 0 #fff;
+    font-size: 150px;
+    color: cyan;
+    font-weight: bold;
+}

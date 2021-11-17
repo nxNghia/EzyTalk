@@ -3,15 +3,14 @@ import ThumbUpIcon from '@material-ui/icons/ThumbUp';
 import ThumbDownAltIcon from '@material-ui/icons/ThumbDownAlt';
 import FavoriteIcon from '@material-ui/icons/Favorite';
 import { useState } from 'react'
-import Cookies from 'js-cookie';
 
-const Emoji = ({dialog, socket, room}) => {
+const Emoji = ({dialog, react}) => {
     const [enter, setEnter] = useState(false)
     const [show, setShow] = useState(false)
 
     const style = {
         emoji: {
-            background: enter ? '#999999' : '',
+            background: enter ? '#999999' : 'none',
             borderRadius: '50%',
             padding: '1px',
             cursor: 'pointer',
@@ -27,7 +26,6 @@ const Emoji = ({dialog, socket, room}) => {
         emojiItem: {
             cursor: 'pointer',
             fontSize: 'medium',
-            color: '#fcf51c',
             paddingRight: 5,
         }
     }
@@ -40,16 +38,16 @@ const Emoji = ({dialog, socket, room}) => {
     }
 
     const reaction = (reactionId) => {
-        socket.emit('get-reaction', dialog, reactionId, Cookies.get('userId'), room._id)
+        react(reactionId, dialog._id)
     }
 
     return (
-        <div onMouseLeave={() => setShow(false)}>
+        <div className="emoji" onMouseLeave={() => setShow(false)}>
             {
                 show && <div style={style.emojiList}>
-                <ThumbUpIcon style={style.emojiItem} onClick={() => reaction(1)}></ThumbUpIcon>
-                <ThumbDownAltIcon style={style.emojiItem} onClick={() => reaction(2)}></ThumbDownAltIcon>
-                <FavoriteIcon color='secondary' style={{paddingRight: 5, fontSize: 'medium', cursor: 'pointer'}} onClick={() => reaction(3)}></FavoriteIcon>
+                <ThumbUpIcon style={style.emojiItem}  color='primary' onClick={() => reaction(1)}></ThumbUpIcon>
+                <ThumbDownAltIcon style={style.emojiItem} color='primary' onClick={() => reaction(2)}></ThumbDownAltIcon>
+                <FavoriteIcon style={{paddingRight: 5, fontSize: 'medium', cursor: 'pointer'}} color='secondary' onClick={() => reaction(3)}></FavoriteIcon>
                 </div>
             }
             <EmojiEmotionsOutlinedIcon 

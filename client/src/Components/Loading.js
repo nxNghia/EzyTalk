@@ -4,7 +4,7 @@ const Loading = () => {
     const style = {
         textAlign: 'center',
         height: '100%',
-        background: 'linear-gradient(53deg, rgba(131,58,180,1) 19%, rgba(69,186,252,1) 72%)',
+        background: 'linear-gradient(135deg, rgba(88,63,243,1) 0%, rgba(255,77,0,0.7962535355939251) 100%)',
 
         content: {
             position: 'absolute',

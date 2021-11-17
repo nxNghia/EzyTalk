@@ -1,32 +1,41 @@
-import ChatWindow from "./Components/ChatWindow";
 import { useState, useEffect } from 'react';
-import Login from './Components/Login';
 import '../src/App.css';
 import io from 'socket.io-client';
-import Loading from './Components/Loading';
 import axios from "axios";
-import CreateRoom from "./Components/CreateRoom";
-import Room from './Components/Room';
 import Cookies from "js-cookie";
-import UserArea from "./Components/UserArea";
-import FindRoom from "./Components/FindRoom";
+import ChatWindow from "./Components/ChatWindow";
+import Login from './Components/Login/Login';
+import Loading from './Components/Loading';
+import UserArea from "./Components/UserInformation/UserArea";
+import FindRoom from "./Components/Rooms/FindRoom";
+import RoomManage from "./Components/Room/RoomManage";
+import RoomsList from "./Components/Rooms/RoomsList";
+import { useMediaQuery } from 'react-responsive'
 
 const socket = io.connect('/')
 
 function App() {
   const [connected, setConnect] = useState(false)
-  const [valid, setValid] = useState(false)
+  const [error, setError] = useState(false)
+  const [authenticated, setAuthenticated] = useState(false)
   const [user, setUser] = useState(null)
   const [roomId, setRoomId] = useState('')
-  const [currentRoom, setCurrentRoom] = useState(null)
+  const [roomPanel, setPanel] = useState(false)
+  const [currentRoom, setCurrentRoom] = useState({
+    _id: -1,
+    room_name: " ",
+    color: ''
+  })
   const [rooms, setRooms] = useState([])
   const [login, setLogin] = useState(false)
 
+  const limit = useMediaQuery({maxWidth: 1300})
+
   const style = {
     left: {
-      width: '25%',
+      width: limit ? '15em' : '25%',
       float: 'left',
-      background: '#202636',
+      background: 'transparent',
       height: '100%',
       boxSizing: 'border-box',
       borderRight: '2px solid #4a336e'
@@ -50,48 +59,63 @@ function App() {
   }
 
   const logIn = async (user) => {
-    const result = await axios.post('/user/login', user, {withCredentials: true})
-    setValid(result.data._id !== undefined)
+    const result = await axios.post('http://localhost:8000/user/login', user, {withCredentials: true})
+    setAuthenticated(result.data._id !== undefined)
+    setError(result.data._id === undefined)
     setUser(result.data)
-    if(result.data.rooms.length !== 0)
-    {
-      const listOfRooom = await axios.get('/room/retrieve', {withCredentials: true})
-      setRooms(listOfRooom.data)
+
+    const listOfRooom = await axios.get('http://localhost:8000/room/retrieve', {withCredentials: true})
+    setRooms(listOfRooom.data)
+    if(listOfRooom.data.length !== 0)
       setCurrentRoom(listOfRooom.data[0])
-    }
   }
 
   const leaveRoom = async (id) => {
-    const res = await axios.post('/room/leave', {id: id}, {withCredentials: true})
-    const index = rooms.findIndex(room => room._id === id)
-    rooms.splice(index, 1)
-    if(rooms.length !== 0)
-      setCurrentRoom(rooms[0])
-    else
-      setCurrentRoom(null)
+    axios.post('http://localhost:8000/room/leave', {id: id}, {withCredentials: true}).then(result => {
+      const index = rooms.findIndex(room => room._id === id)
+      if(index !== -1)
+      {
+        rooms.splice(index, 1)
+        const tmp = [...rooms]
+        tmp.every((room, index) => {
+          if(room._id === id)
+          {
+            tmp.splice(index, 1)
+            return false
+          }
+          return true
+        })
+        if(rooms.length !== 0)
+          setCurrentRoom(rooms[0])
+        else
+          setCurrentRoom({
+            _id: -1,
+            room_name: " ",
+            color: ''
+          })
+      }
+    })
+    
   }
 
   const findRoom = async () => {
-    const response = await axios.post('/room/find', {id: roomId}, {withCredentials: true})
-    if(response)
+    const index = rooms.findIndex(room => room.short_id === roomId)
+    if(index === -1)
     {
-      const exist = user.rooms.findIndex((room) => room.roomId === response.data._id)
-      if(exist === -1)
-      {
-        setRooms([response.data, ...rooms])
-      }
+      axios.post('http://localhost:8000/room/find', {id: roomId}, {withCredentials: true}).then(reponse => {
+        setRooms([reponse.data, ...rooms])
+      })
     }
   }
 
   const joinRoom = async (room) => {
     if(room)
     {
-      const response = await axios.post('/room/create', room, {withCredentials: true})
+      const response = await axios.post('http://localhost:8000/room/create', room, {withCredentials: true})
       if(response)
       {
-        setUser(result.data.user)
-        setRooms([...rooms, result.data.room])
-        setCurrentRoom(result.data.room)
+        setRooms([response.data.room, ...rooms])
+        setCurrentRoom(response.data.room)
       }
     }
   }
@@ -102,62 +126,71 @@ function App() {
       socket.emit('leaveRoom', currentRoom._id, newRoom._id)
       setCurrentRoom(newRoom)
     }
+    setCurrentRoom(newRoom)
   }
 
   const logout = async () => {
-    const response = await axios.get('/user/logout', {withCredentials: true})
+    const response = await axios.get('http://localhost:8000/user/logout', {withCredentials: true})
     if(response)
     {
-      setValid(false)
+      setAuthenticated(false)
       setLogin(false)
-      setCurrentRoom(null)
+      setCurrentRoom({
+        _id: -1,
+        room_name: " ",
+        color: ''
+      })
       setRooms([])
     }
   }
 
+  const roomManage = (room) => {
+    setPanel(true)
+  }
+
   useEffect(() => {
     setLogin(Cookies.get('userId') !== undefined)
-    if(Cookies.get('userId') !== undefined && !valid)
+    if(Cookies.get('userId') !== undefined && !authenticated)
     {
-      axios.get('/user/find', {withCredentials: true}).then((response) => {
+      axios.get('http://localhost:8000/user/find', {withCredentials: true}).then((response) => {
         setUser(response.data)
       })
 
-      axios.get('/room/retrieve', {withCredentials: true}).then((response) => {
+      axios.get('http://localhost:8000/room/retrieve', {withCredentials: true}).then((response) => {
         setRooms(response.data)
-        setCurrentRoom(response.data[0])
+        if(response.data.length !== 0)
+        {
+          setCurrentRoom(response.data[0])
+        }
       })
-      setValid(true)
+      setAuthenticated(true)
     }
     socket.once('connected', () => setConnect(true))
-  }, [user, rooms])
+  }, [user, rooms, authenticated])
 
   useEffect(() => {
     if(currentRoom)
     {
-      socket.emit('joinRoom', currentRoom._id)
+      socket.emit('joinRoom', currentRoom)
     }
   }, [currentRoom])
 
   return (
     <div className="App">
-      {!connected ? <Loading></Loading> : (((valid || login) && user) ? <div style={{height: '100%'}}>
-      <div style={style.left}>
-        <UserArea user={user} logout={logout}></UserArea>
-        <div>
-          {rooms.map((room) => {
-            return (
-              <Room key={room._id} room={room} onClick={switchRoom}></Room>
-            )
-          })}
-          <CreateRoom joinRoom={joinRoom}></CreateRoom>
+      {!connected ? <Loading></Loading> : (((authenticated || login) && user) ? 
+      <div style={{position: 'relative', width: '100%', height: '100%'}}>
+        <div style={{height: '100%', display: 'flex'}}>
+          <div style={style.left}>
+            <UserArea user={user} logout={logout}></UserArea>
+            <RoomsList currentRoom={currentRoom} rooms={rooms} joinRoom={joinRoom} leaveRoom={leaveRoom} switchRoom={switchRoom} roomManage={roomManage}/>
+            <FindRoom roomId={roomId} setRoomId={setRoomId} findRoom={findRoom}></FindRoom>
+          </div>
+          <div style={style.right}>
+            <ChatWindow socket={socket} room={currentRoom} leave={leaveRoom}></ChatWindow>
+          </div>
         </div>
-        <FindRoom roomId={roomId} setRoomId={setRoomId} findRoom={findRoom}></FindRoom>
-      </div>
-      <div style={style.right}>
-        <ChatWindow socket={socket} room={currentRoom} leave={leaveRoom}></ChatWindow>
-      </div>
-      </div> : <Login logIn={logIn}></Login>)}
+        <RoomManage room={currentRoom} manageToggle={roomPanel} setPanel={setPanel}></RoomManage>
+      </div> : <Login logIn={logIn} invalid={error} errorToggle={setError}></Login>)}
     </div>
   );
 }

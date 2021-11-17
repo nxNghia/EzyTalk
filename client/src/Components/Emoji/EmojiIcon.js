@@ -6,15 +6,15 @@ const EmojiIcon = ({emojiIndex}) => {
     const style = {
         marginRight: '2px',
         cursor: 'pointer',
-        fontSize: 'x-small'
+        fontSize: 'small'
     }
     const GetEmoji = () => {
         switch (emojiIndex)
         {
-            case '1':
+            case 1:
                 return <ThumbUpIcon style={style} color='primary'></ThumbUpIcon>
             
-            case '2':
+            case 2:
                 return <ThumbDownAltIcon style={style} color='primary'></ThumbDownAltIcon>
 
             default:
