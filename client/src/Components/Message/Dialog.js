@@ -135,7 +135,7 @@ const Dialog = ({dialog, onDelete, room, socket}) => {
     }, [dialog])
 
     useEffect(() => {
-        axios.post('http://localhost:8000/reaction/retrieve', {id: dialog._id}, {withCredentials: true}).then(result => {
+        axios.post('/reaction/retrieve', {id: dialog._id}, {withCredentials: true}).then(result => {
             setReaction(result.data.data)
         })
 

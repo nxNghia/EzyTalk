@@ -14,7 +14,7 @@ const Members = ({room}) => {
     }
 
     useEffect(() => {
-        axios.post('http://localhost:8000/room/members', {roomId}, {withCredentials: true}).then(response => {
+        axios.post('/room/members', {roomId}, {withCredentials: true}).then(response => {
             setMembers(response.data)
         })
     }, [roomId])

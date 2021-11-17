@@ -59,7 +59,7 @@ const ChatWindow = ({socket, room, leave}) => {
     useEffect(() => {
         setRoom(room)
         if(room._id !== -1)
-            axios.post('http://localhost:8000/chat/retrieve', room, {withCredentials: true}).then(response => {
+            axios.post('/chat/retrieve', room, {withCredentials: true}).then(response => {
                 setDialogs(response.data)
             })
     }, [room])

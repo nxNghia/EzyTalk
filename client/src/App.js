@@ -59,19 +59,19 @@ function App() {
   }
 
   const logIn = async (user) => {
-    const result = await axios.post('http://localhost:8000/user/login', user, {withCredentials: true})
+    const result = await axios.post('/user/login', user, {withCredentials: true})
     setAuthenticated(result.data._id !== undefined)
     setError(result.data._id === undefined)
     setUser(result.data)
 
-    const listOfRooom = await axios.get('http://localhost:8000/room/retrieve', {withCredentials: true})
+    const listOfRooom = await axios.get('/room/retrieve', {withCredentials: true})
     setRooms(listOfRooom.data)
     if(listOfRooom.data.length !== 0)
       setCurrentRoom(listOfRooom.data[0])
   }
 
   const leaveRoom = async (id) => {
-    axios.post('http://localhost:8000/room/leave', {id: id}, {withCredentials: true}).then(result => {
+    axios.post('/room/leave', {id: id}, {withCredentials: true}).then(result => {
       const index = rooms.findIndex(room => room._id === id)
       if(index !== -1)
       {
@@ -102,7 +102,7 @@ function App() {
     const index = rooms.findIndex(room => room.short_id === roomId)
     if(index === -1)
     {
-      axios.post('http://localhost:8000/room/find', {id: roomId}, {withCredentials: true}).then(reponse => {
+      axios.post('/room/find', {id: roomId}, {withCredentials: true}).then(reponse => {
         setRooms([reponse.data, ...rooms])
       })
     }
@@ -111,7 +111,7 @@ function App() {
   const joinRoom = async (room) => {
     if(room)
     {
-      const response = await axios.post('http://localhost:8000/room/create', room, {withCredentials: true})
+      const response = await axios.post('/room/create', room, {withCredentials: true})
       if(response)
       {
         setRooms([response.data.room, ...rooms])
@@ -130,7 +130,7 @@ function App() {
   }
 
   const logout = async () => {
-    const response = await axios.get('http://localhost:8000/user/logout', {withCredentials: true})
+    const response = await axios.get('/user/logout', {withCredentials: true})
     if(response)
     {
       setAuthenticated(false)
@@ -152,11 +152,11 @@ function App() {
     setLogin(Cookies.get('userId') !== undefined)
     if(Cookies.get('userId') !== undefined && !authenticated)
     {
-      axios.get('http://localhost:8000/user/find', {withCredentials: true}).then((response) => {
+      axios.get('/user/find', {withCredentials: true}).then((response) => {
         setUser(response.data)
       })
 
-      axios.get('http://localhost:8000/room/retrieve', {withCredentials: true}).then((response) => {
+      axios.get('/room/retrieve', {withCredentials: true}).then((response) => {
         setRooms(response.data)
         if(response.data.length !== 0)
         {

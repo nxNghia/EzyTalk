@@ -101,7 +101,7 @@ const Login = ({logIn, invalid, errorToggle}) => {
     }
 
     const registation = async () => {
-        const result = await axios.post('http://localhost:8000/user/signin', user)
+        const result = await axios.post('/user/signin', user)
         if(result.data.valid)
             logIn(user)
     }
